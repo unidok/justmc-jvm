@@ -5,9 +5,9 @@ plugins {
     kotlin("jvm") version "2.3.10"
 }
 
-apply("$rootDir/jjvm.gradle.kts")
+apply("https://raw.githubusercontent.com/unidok/justmc-jvm/refs/heads/master/jjvm.gradle.kts")
 
-group = "me.unidok"
+group = "me.yourname"
 version = "1.0-SNAPSHOT"
 
 repositories {
