@@ -1,7 +1,9 @@
 package justmc;
 
 import justmc.enums.TextMerging;
+import justmc.annotation.PrimitiveType;
 
+@PrimitiveType
 public enum Player {
     CURRENT,
     DEFAULT,
@@ -11,6 +13,9 @@ public enum Player {
     VICTIM,
     RANDOM,
     ALL;
+
+    public native void operation(String id);
+    public native void operation(String id, CopyableMap<String, Object> args);
 
     public native void sendMessage(String message);
     public native void sendMessage(Text[] message, TextMerging merging);

@@ -1,5 +1,8 @@
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
-rootProject.name = "justmc-jvm"
+rootProject.name = "jjvm"
 include("justmc-jdk")
+include("justmc-jvm-test")
+include("justmc-jvm")
+include("justmc-code")

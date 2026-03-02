@@ -11,9 +11,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks.jar {
+    destinationDirectory.set(file("$rootDir/justmc-jvm-test/jjvm"))
 }

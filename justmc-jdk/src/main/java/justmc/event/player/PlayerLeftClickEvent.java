@@ -1,7 +1,10 @@
 package justmc.event.player;
 
-import justmc.event.CancellableEvent;
+import justmc.event.*;
 
-public final class PlayerLeftClickEvent implements PlayerEvent, CancellableEvent {
+public final class PlayerLeftClickEvent implements PlayerEvent, CancellableEvent,
+        BlockEvent, BlockFaceEvent, ItemEvent {
     private PlayerLeftClickEvent() {}
+
+    public native boolean hasBlock();
 }

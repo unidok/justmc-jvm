@@ -9,7 +9,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/justmc-code" />
             <option value="$PROJECT_DIR$/justmc-jdk" />
+            <option value="$PROJECT_DIR$/justmc-jvm" />
+            <option value="$PROJECT_DIR$/justmc-jvm-test" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,33 +1,11 @@
 plugins {
-    kotlin("jvm") version "2.2.21"
-    kotlin("plugin.serialization") version "2.2.21"
+    kotlin("jvm") version "2.3.10"
+    kotlin("plugin.serialization") version "2.3.10"
 }
 
 group = "me.unidok"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
-}
-
-dependencies {
-    implementation("org.ow2.asm:asm:9.9")
-    implementation("org.ow2.asm:asm-tree:9.9")
-    implementation("org.ow2.asm:asm-util:9.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-    implementation(kotlin("stdlib"))
-}
-
-kotlin {
-    jvmToolchain(21)
-}
-
-tasks.jar {
-    manifest.attributes["Main-Class"] = "me.unidok.jjvm.Main"
-
-    doFirst {
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    }
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

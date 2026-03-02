@@ -1,11 +1,10 @@
 package justmc.event.player;
 
-import justmc.Item;
-import justmc.Location;
-import justmc.event.BlockEvent;
-import justmc.event.CancellableEvent;
-import justmc.event.ItemEvent;
+import justmc.event.*;
 
-public final class PlayerRightClickEvent implements PlayerEvent, BlockEvent, ItemEvent, CancellableEvent {
+public final class PlayerRightClickEvent implements PlayerEvent, CancellableEvent,
+        BlockEvent, BlockFaceEvent, ItemEvent, EquipmentSlotEvent {
     private PlayerRightClickEvent() {}
+
+    public native boolean hasBlock();
 }
