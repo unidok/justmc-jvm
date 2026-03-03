@@ -31,3 +31,19 @@ tasks.jar {
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+tasks.register<Exec>("publishReleaseJVM") {
+    doFirst {
+        require(System.getenv("GH_TOKEN") != null) { "env GH_TOKEN is null" }
+    }
+    group = "publishing"
+    dependsOn("jar")
+    val tagName = "jvm-$version"
+    val jarFile = tasks.jar.get().archiveFile.get().asFile
+    commandLine(
+        "gh", "release", "create", tagName,
+        jarFile.absolutePath,
+        "--repo", "unidok/justmc-jvm",
+        "--title", tagName,
+    )
+}
