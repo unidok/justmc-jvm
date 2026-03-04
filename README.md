@@ -17,6 +17,7 @@ apply("https://raw.githubusercontent.com/unidok/justmc-jvm/refs/heads/master/jjv
 ```properties
 justmc.jvm.version=1.0
 justmc.jdk.version=1.0
+justmc.dir.out=out
 ```
 4. Перезагружаем Gradle (должна появиться кнопочка справа сверху)
 5. Можно начинать работу
