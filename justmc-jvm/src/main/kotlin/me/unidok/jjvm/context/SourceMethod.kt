@@ -2,14 +2,13 @@ package me.unidok.jjvm.context
 
 import me.unidok.jjvm.translator.BytecodeTranslator
 import me.unidok.jjvm.operand.Operand
-import me.unidok.jjvm.operation.New
 import me.unidok.jjvm.operation.NewArray
 import me.unidok.jjvm.operation.Operation
-import me.unidok.jjvm.operation.PutField
 import me.unidok.jjvm.util.Annotations
 import me.unidok.jjvm.util.getAnnotation
 import me.unidok.jjvm.util.isAnnotated
 import me.unidok.jjvm.util.replaceOverride
+import me.unidok.justcode.value.TextValue
 import org.objectweb.asm.Label
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
@@ -21,7 +20,8 @@ import kotlin.collections.set
 
 class SourceMethod(
     val sourceClass: SourceClass,
-    val node: MethodNode
+    val node: MethodNode,
+    val functionName: String
 ) {
     val stack = ArrayDeque<Operand>(node.maxStack)
     val operations = ArrayList<Operation>()
@@ -31,12 +31,10 @@ class SourceMethod(
     val inlineVariables = HashMap<Int, Operand>()
     val constArrays = HashMap<NewArray, List<Operand>>()
     var calls = 0
-
     val name: String get() = node.name
     val desc: String = node.desc.replaceOverride()
     val access: Int get() = node.access
     val fullName = "${sourceClass.name}.${name}${desc}"
-    val functionName = getAnnotation(Annotations.FUNCTION_NAME)?.get("name") as? String ?: fullName
 
     fun isAnnotated(annotation: String): Boolean =
         node.invisibleAnnotations.isAnnotated(annotation)

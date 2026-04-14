@@ -1,5 +1,5 @@
-package justmc.util;
-
+//package justmc.util;
+//
 //import justmc.*;
 //import org.jetbrains.annotations.NotNull;
 //import org.jetbrains.annotations.Nullable;
@@ -8,7 +8,7 @@ package justmc.util;
 //import java.util.List;
 //import java.util.Map;
 //import java.util.Set;
-
+//
 //public class Primitive2ObjectMap<K extends Primitive, V> implements Map<K, V> {
 //    public Primitive2ObjectMap() {
 //        Unsafe.operation("set_variable_create_map", MapPrimitive.of(
@@ -17,7 +17,7 @@ package justmc.util;
 //    }
 //
 //    private Variable delegate() {
-//        return Variable.game(Unsafe.getInstance(this).getName() + "_delegate");
+//        return Memory.getPrimitiveFieldsVariable(this);
 //    }
 //
 //    private MapPrimitive<K, NumberPrimitive> map() {

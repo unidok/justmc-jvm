@@ -3,6 +3,13 @@ package justmc;
 import justmc.annotation.Inline;
 import justmc.enums.TimeUnit;
 
+/**
+ * Действия с текущим потоком кода.
+ * Поток создаётся при запуске события или процесса.
+ * Потоки на JustMC на самом деле выполняются на одном физическом
+ * потоке, поэтому здесь нет параллелизма.
+ * Для каждого потока свои локальные переменные.
+ */
 @Inline
 public final class Thread {
     private Thread() {}
@@ -21,7 +28,7 @@ public final class Thread {
     }
 
     public static void awaitCpu() {
-        while (World.getCpu() >= 60) {
+        while (World.cpu() >= 60) {
             wait(1);
         }
     }

@@ -1,5 +1,9 @@
-import justmc.Selection;
+import justmc.*;
+import justmc.Thread;
 import justmc.annotation.EventHandler;
+import justmc.entity.Player;
+import justmc.enums.BlockValueType;
+import justmc.event.player.PlayerJoinEvent;
 import justmc.event.player.PlayerSwapHandItemsEvent;
 
 public final class Main {
@@ -8,23 +12,37 @@ public final class Main {
     }
 
     @EventHandler
-    static void onSwapHands(PlayerSwapHandItemsEvent event) {
-        calcSumArr(new int[]{1,2,3,4,5});
+    static void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().sendMessage("Hello");
     }
 
-    static int calcSumArr(int[] arr) {
-        int s = 0;
-        int i = 0;
-        int l = arr.length;
-        println("start");
-        while (i < l) {
-            println("in");
-            s += arr[i];
-            ++i;
-        }
-        println("end");
-        return s;
-    }
+//    @EventHandler
+//    static void onSwapHands(PlayerSwapHandItemsEvent event) {
+//        calcSumArr(new int[]{1,2,3,4,5});
+//        Player player = event.getPlayer();
+//        player.sendMessage(Text.plain("Имя игрока: ").plus(player.getName()));
+//        double x = 0, y = 0, z = 0;
+//        player.getLocation().getAllCoordinates(Variable.of(x), Variable.of(y), Variable.of(z));
+//        player.sendMessage(Text.plain("").plus(NumberPrimitive.of(x)));
+//        Block block = World.getBlock(player.getLocation().addY(-1), BlockValueType.ID_WITH_DATA);
+//        if (block == Block.of("stone")) {
+//            player.sendMessage("stone");
+//        }
+//    }
+//
+//    static int calcSumArr(int[] arr) {
+//        int s = 0;
+//        int i = 0;
+//        int l = arr.length;
+//        println("start");
+//        while (i < l) {
+//            println("in");
+//            s += arr[i];
+//            ++i;
+//        }
+//        println("end");
+//        return s;
+//    }
     
 //    @EventHandler(id = "player_swap_hands")
 //    public static void arr() { // наверное работает

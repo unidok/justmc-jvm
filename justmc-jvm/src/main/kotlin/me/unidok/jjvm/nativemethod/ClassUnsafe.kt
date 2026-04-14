@@ -37,9 +37,5 @@ object ClassUnsafe {
         ).forEach {
             NativeMethods.registerEarly(it, nothingToDo)
         }
-
-        NativeMethods.register("justmc/Unsafe.getInstance(I)Ljustmc/Variable;") { method, context ->
-            ValueProvider.instance(method.args[0].translate(context, null))
-        }
     }
 }

@@ -27,31 +27,31 @@ package override.java.util;
 
 public interface Collection<E> extends Iterable<E> {
 
-    Object[] toArray();
+    java.lang.Object[] toArray();
 
     int size();
 
     boolean isEmpty();
 
-    boolean contains(Object o);
+    boolean contains(java.lang.Object o);
 
-    Iterator<E> iterator();
+    java.util.Iterator<E> iterator();
 
     // Modification Operations
 
     boolean add(E e);
 
-    boolean remove(Object o);
+    boolean remove(java.lang.Object o);
 
     // Bulk Operations
 
-    boolean containsAll(Collection<?> c);
+    boolean containsAll(java.util.Collection<?> c);
 
-    boolean addAll(Collection<? extends E> c);
+    boolean addAll(java.util.Collection<? extends E> c);
 
-    boolean removeAll(Collection<?> c);
+    boolean removeAll(java.util.Collection<?> c);
 
-    boolean retainAll(Collection<?> c);
+    boolean retainAll(java.util.Collection<?> c);
 
     void clear();
 

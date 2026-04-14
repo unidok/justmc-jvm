@@ -8,13 +8,29 @@ import org.jetbrains.annotations.NotNull;
 public final class Text extends Primitive {
     private Text() {}
 
-    public static native @NotNull Text plain(String text);
+    @NotNull
+    public static native Text plain(String text);
 
-    public static native @NotNull Text legacy(String text);
+    @NotNull
+    public static native Text plain(Primitive o);
 
-    public static native @NotNull Text mini(String text);
+    @NotNull
+    public static native Text legacy(String text);
 
-    public static native @NotNull Text json(String text);
+    @NotNull
+    public static native Text legacy(Primitive o);
+
+    @NotNull
+    public static native Text mini(String text);
+
+    @NotNull
+    public static native Text mini(Primitive o);
+
+    @NotNull
+    public static native Text json(String text);
+
+    @NotNull
+    public static native Text json(Primitive o);
 
     public int getLength() {
         var result = Variable.result();
@@ -25,7 +41,8 @@ public final class Text extends Primitive {
         return Unsafe.asInt(result);
     }
 
-    public @NotNull Text setParsing(TextParsing parsing) {
+    @NotNull
+    public Text setParsing(TextParsing parsing) {
         var result = Variable.result();
         Unsafe.operation("set_variable_change_component_parsing", MapPrimitive.of(
                 Pair.of("variable", result),
@@ -35,5 +52,6 @@ public final class Text extends Primitive {
         return Unsafe.cast(result);
     }
 
-    public native @NotNull Text plus(Primitive other);
+    @NotNull
+    public native Text plus(Primitive other);
 }

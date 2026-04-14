@@ -2,7 +2,6 @@ package me.unidok.jjvm.util
 
 import me.unidok.jjvm.context.SourceMethod
 import me.unidok.jjvm.context.TranslationContext
-import me.unidok.jjvm.nativemethod.EarlyNativeMethod
 import me.unidok.jjvm.operand.LoadFromLocal
 import me.unidok.jjvm.operand.LoadStringConstant
 import me.unidok.jjvm.operand.Operand
@@ -62,14 +61,14 @@ object Annotations {
     const val INLINE = "Ljustmc/annotation/Inline;"
     const val EVENT = "Ljustmc/annotation/Event;"
     const val EVENT_HANDLER = "Ljustmc/annotation/EventHandler;"
-    const val FUNCTION_NAME = "Ljustmc/annotation/FunctionName;"
+    const val JMC_NAME = "Ljustmc/annotation/JmcName;"
 }
 
 fun List<AnnotationNode>?.isAnnotated(annotation: String): Boolean =
-    this != null && any { it.desc == annotation }
+    this != null && any { annotation == it.desc }
 
 fun List<AnnotationNode>?.getAnnotation(annotation: String): Map<String, Any>? {
-    val values = this?.find { it.desc == annotation }?.values ?: return null
+    val values = this?.find { annotation == it.desc }?.values ?: return null
     val size = values.size
     val result = HashMap<String, Any>(size / 2)
     var index = 0

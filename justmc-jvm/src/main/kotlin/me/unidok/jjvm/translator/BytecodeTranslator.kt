@@ -17,7 +17,7 @@ class BytecodeTranslator(
     private val sourceMethod: SourceMethod,
     private val bytecode: Iterator<AbstractInsnNode>
 ) {
-    private val inlineMethodsStack = HashSet<SourceMethod>()
+    //private val inlineMethodsStack = HashSet<SourceMethod>()
     private var line = -1
 
     private fun getLabelIndex(label: Label): Int {
@@ -406,28 +406,27 @@ class BytecodeTranslator(
                         val operation: OperationWithResult = run {
                             val sourceClass = sourceMethod.sourceClass
                             val jar = sourceClass.jar
-                            jar.findClass(owner)?.let { clazz ->
-                                val method = clazz.methods[methodName] ?: return@let
-                                val isInit = name == "<init>"
-                                val forceInline = !isInit && method.isAnnotated(Annotations.INLINE)
-                                if (!inlineMethodsStack.add(method)) {
-                                    if (forceInline) throw IllegalStateException("Inline method '$methodName' cannot be recursive")
-                                    if (!isInit) {
-                                        inlineMethodsStack.remove(method)
-                                        return@let // не пытаемся инлайнить рекурсивные методы
+                            val clazz = jar.findClass(owner)
+                            if (clazz != null) {
+                                val method = clazz.methods[methodName]
+                                if (method != null) {
+                                    val isInit = name == "<init>"
+                                    val forceInline = !isInit && method.isAnnotated(Annotations.INLINE)
+//                                    if (!inlineMethodsStack.add(method)) {
+//                                        throw IllegalStateException("Inline method '$methodName' cannot be recursive")
+//                                    }
+                                    if (
+                                        isInit ||
+                                        forceInline ||
+                                        clazz.isAnnotated(Annotations.INLINE) ||
+                                        //method.getLength() <= jar.config.maxInlineLength || // TODO getLength может быть не инициализировано
+                                        NativeMethods.findMethod(methodName) != null
+                                    ) {
+                                        //inlineMethodsStack.remove(method)
+                                        return@run InlineMethod(method, self, args)
                                     }
+                                    method.calls++
                                 }
-                                if (
-                                    isInit ||
-                                    forceInline ||
-                                    clazz.isAnnotated(Annotations.INLINE) ||
-                                    //method.getLength() <= jar.config.maxInlineLength || // TODO getLength может быть не инициализировано
-                                    NativeMethods.findMethod(methodName) != null
-                                ) {
-                                    inlineMethodsStack.remove(method)
-                                    return@run InlineMethod(method, self, args)
-                                }
-                                method.calls++
                             }
 
                             InvokeMethod(

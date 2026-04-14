@@ -1,22 +1,74 @@
 package justmc;
 
+import justmc.annotation.FakeObject;
 import justmc.annotation.Inline;
 
 import java.util.Iterator;
 
+/**
+ * Класс с утилитами для кода и взаимодействия с действиями Creative+.
+ * Внимание! Использование методов отсюда может привести к
+ * неопределённому поведению или ошибкам в вашем коде.
+ * Используйте, только если знаете, что делаете.
+ */
 @Inline
 public final class Unsafe {
     private Unsafe() {}
 
-    // Действия воровать отсюда: https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json
+    /**
+     * Вызов действия Creative+.
+     * @param id Идентификатор действия
+     * @param args Аргументы действия
+     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     */
     public static native void operation(String id, MapPrimitive<Text, Primitive> args);
 
+    /**
+     * Вызов действия Creative+ с указанием блока кода.
+     * Например, можно использовать для действий из контроллера или для циклов.
+     * @param id Идентификатор действия
+     * @param args Аргументы действия
+     * @param block Блок кода
+     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     */
     public static native void operation(String id, MapPrimitive<Text, Primitive> args, Runnable block);
 
+    /**
+     * Вызов действия Creative+ с указанием условия.
+     * Например, можно использовать для выборки по условию.
+     * @param id Идентификатор действия
+     * @param conditional Условие действия
+     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     */
     public static native void operation(String id, Conditional conditional);
 
+    /**
+     * Вызов действия Creative+ с указанием условия и блока кода.
+     * Например, можно использовать для условий.
+     * @param id Идентификатор действия
+     * @param conditional Аргументы действия
+     * @param block Блок кода
+     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     */
     public static native void operation(String id, Conditional conditional, Runnable block);
 
+    /**
+     * Создаёт примитивный итератор, который будет заменён на цикл.
+     * Требуется строгий порядок действий:
+     * <pre>{@code
+     * Iterator<Primitive> iterator = Unsafe.iterator(...);
+     * while (iterator.hasNext()) {
+     *     Primitive n = iterator.next();
+     *     // Последующий код, где нельзя взаимодействовать с итератором
+     * }
+     * }</pre>
+     * Если использовать это не по шаблону, показанному выше, то это может привести к ошибкам на этапе трансляции.
+     * @param id Идентификатор цикла
+     * @param args Аргументы цикла
+     * @return Примитивный итератор
+     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     */
+    @FakeObject
     public static native <E extends Primitive> Iterator<E> iterator(String id, MapPrimitive<Text, Primitive> args);
 
     /**

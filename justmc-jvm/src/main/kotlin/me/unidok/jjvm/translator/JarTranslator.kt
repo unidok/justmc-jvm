@@ -1,27 +1,18 @@
 package me.unidok.jjvm.translator
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import me.unidok.jjvm.context.SourceClass
 import me.unidok.jjvm.context.SourceMethod
 import me.unidok.jjvm.context.TranslationContext
 import me.unidok.jjvm.model.JJVMConfig
 import me.unidok.jjvm.operand.LoadFromLocal
 import me.unidok.jjvm.operand.NativeValue
-import me.unidok.jjvm.operand.Operand
 import me.unidok.jjvm.operand.OperationResult
 import me.unidok.jjvm.operation.*
 import me.unidok.jjvm.util.Annotations
 import me.unidok.jjvm.util.Debugger
 import me.unidok.jjvm.util.JustOperation
 import me.unidok.jjvm.util.Values
+import me.unidok.jjvm.util.getAnnotation
 import me.unidok.justcode.Handlers
 import me.unidok.justcode.trigger.EventTrigger
 import me.unidok.justcode.trigger.FunctionTrigger
@@ -33,8 +24,6 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 import org.objectweb.asm.tree.ClassNode
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.ThreadPoolExecutor
 import java.util.jar.JarFile
 import kotlin.collections.get
 import kotlin.collections.iterator
@@ -55,18 +44,17 @@ class JarTranslator(
     }
 
     fun findMethod(owner: String, name: String, desc: String): SourceMethod? {
-        return classes[owner]?.methods[name + desc]
+        return classes[owner]?.methods["$owner.$name$desc"]
     }
 
     fun getClassAddress(type: Type): Variable = dynamicConstants[type]
         ?: type.className.let { className ->
             val variable = Variable("$className.class")
             dynamicConstants[type] = variable
-            val new = New("java/lang/Class")
-            val adr = OperationResult(new)
+            val adr = OperationResult(New("java/lang/Class"))
             val store = StoreToConstantPool(variable.name, adr)
             val putField = PutField("java/lang/Class", "name", "Ljustmc/Text;", adr, NativeValue(Values.valueOf(className)))
-            registerNatives.addAll(listOf(new, store, putField))
+            registerNatives.addAll(listOf(store, putField))
             variable
         }
 
@@ -77,6 +65,7 @@ class JarTranslator(
 
         // Чтение JAR
         JarFile(jarPath).use { jarFile ->
+            var methodIndex = 0
             for (entry in jarFile.entries()) {
                 val entryName = entry.name
                 if (entryName.endsWith(".class")) {
@@ -103,7 +92,14 @@ class JarTranslator(
                     }
 
                     for (methodNode in classNode.methods) {
-                        val method = SourceMethod(clazz, methodNode)
+                        val method = SourceMethod(
+                            clazz,
+                            methodNode,
+                            methodNode.invisibleAnnotations
+                                .getAnnotation(Annotations.JMC_NAME)
+                                ?.get("name") as? String
+                                ?: (++methodIndex).toString(36)
+                        )
                         val desc = method.desc
                         Type.getArgumentTypes(desc).forEachIndexed { index, type ->
                             method.resolvedTypes.put(LoadFromLocal(index), type)
@@ -234,14 +230,12 @@ class JarTranslator(
                     ))
                 }
 
-                val functionName = method.getAnnotation(Annotations.FUNCTION_NAME)?.get("name") as? String ?: method.fullName
-
                 handlers.add(FunctionTrigger(
                     justOperations,
-                    functionName,
+                    method.functionName,
                     parameters,
                     LocalizedText(LocalizedText.Data(emptyMap(), TextValue("${className.substringAfterLast('/')}.$methodName"))),
-                    LocalizedText(LocalizedText.Data(emptyMap(), TextValue(functionName)))
+                    LocalizedText(LocalizedText.Data(emptyMap(), TextValue(method.functionName)))
                 ))
             }
         }

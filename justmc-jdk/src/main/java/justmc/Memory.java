@@ -11,19 +11,20 @@ import justmc.annotation.Inline;
  * может хранить по 20000 объектных полей и ещё столько же примитивных.
  */
 public final class Memory {
-    private static final int MIN_HEAP = 128;
-    private static final int MAX_HEAP = ListPrimitive.MAX_SIZE;
-    private static int heapSize = MIN_HEAP;
+    private static final int HEAP_SIZE = ListPrimitive.MAX_SIZE - 1;
     /**
      * Данные кучи, хранящие класс каждого объекта.
      * [null, ссылка на класс, ссылка на класс, ссылка на класс, ...]
+     *  ^^^^
+     * Если мы попытаемся обратиться по нулевому указателю, то нам даст null.
+     * То есть мы выделили дополнительную ячейку под null, чтобы избежать лишних проверок.
      */
-    private static ListPrimitive<NumberPrimitive> objs = ListPrimitive.ofNulls(MIN_HEAP + 1);
+    private static ListPrimitive<NumberPrimitive> objs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
     /**
      * Данные кучи, хранящие количество ссылок на каждой объект.
      * [null, количество ссылок, количество ссылок, количество ссылок, ...]
      */
-    private static ListPrimitive<NumberPrimitive> refs = ListPrimitive.ofNulls(MIN_HEAP + 1);
+    private static ListPrimitive<NumberPrimitive> refs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
     /**
      * Очередь свободных указателей.
      * Изначально хранит все указатели.
@@ -31,19 +32,17 @@ public final class Memory {
     private static ListPrimitive<NumberPrimitive> free = ListPrimitive.empty();
     /**
      * Индекс начала очереди.
+     * По совместительству количество занятой памяти.
      */
     private static int freeHead = 0;
-    /**
-     * Количество удерживаемых объектов.
-     */
-    private static int holding = 0;
     /**
      * Список объектов, помеченных на удаление.
      */
     private static ListPrimitive<NumberPrimitive> mark = ListPrimitive.empty();
 
     static {
-        for (int i = 1; i < MIN_HEAP; i++) {
+        // Изначально все указатели свободны:
+        for (int i = 1; i <= HEAP_SIZE; i++) {
             free = free.add(NumberPrimitive.of(i));
         }
     }
@@ -51,13 +50,13 @@ public final class Memory {
     private Memory() {}
 
     @Inline
-    public static Variable getObjectFieldsVariable(Primitive ptr) {
-        return Variable.game(Text.plain("o").plus(ptr));
+    public static Variable getObjectFieldsVariable(int ptr) {
+        return Variable.game(Text.plain("o").plus(NumberPrimitive.of(ptr)));
     }
 
     @Inline
-    public static Variable getPrimitiveFieldsVariable(Primitive ptr) {
-        return Variable.game(Text.plain("p").plus(ptr));
+    public static Variable getPrimitiveFieldsVariable(int ptr) {
+        return Variable.game(Text.plain("p").plus(NumberPrimitive.of(ptr)));
     }
 
     @Inline
@@ -89,42 +88,46 @@ public final class Memory {
     /**
      * Удалить ссылку на объект.
      * Автоматически вставляется после каждого дублирования ссылки.
-     * Если ссылок не осталось, то помечает объект на удаление.
+     * Если ссылок не осталось, то удаляет объект.
      * @param ptr Указатель на объект
      * @see #addRef(int ptr)
      */
-    @Inline
     public static void removeRef(int ptr) {
-        int r = getRefs(ptr) - 1;
-        setRefs(ptr, r);
-        if (r <= 0) {
-            mark.add(NumberPrimitive.of(ptr));
+        int refs = getRefs(ptr);
+        if (refs >= 1) {
+            setRefs(ptr, --refs);
+            if (refs == 0) delete(ptr);
         }
     }
 
     public static int newInstance(Class<?> clazz) {
-        if (holding >= heapSize) {
+        if (freeHead >= HEAP_SIZE) {
             gc(); // Пробуем очистить
-            if (holding >= heapSize) {
-                // Если ничего не очистило, то расширяем кучу вдвое
-                if (heapSize >= MAX_HEAP) {
-                    Thread.fatalError(Text.plain("Out of memory"));
-                }
-                int newSize = Math.min(heapSize * 2, MAX_HEAP);
-                int add = newSize - heapSize;
-                ListPrimitive<NumberPrimitive> addHeap = ListPrimitive.ofNulls(add);
-                objs = objs.addAll(addHeap);
-                refs = refs.addAll(addHeap);
-                // Добавляем свободные указатели
-                for (int i = 1; i <= add; i++) {
-                    free = free.add(NumberPrimitive.of(++heapSize));
-                }
+            if (freeHead >= HEAP_SIZE) {
+                // Если не смогло очистить, кидаем ошибку
+                Thread.fatalError(Text.plain("Out of memory"));
             }
         }
         int ptr = Unsafe.asInt(free.get(freeHead++));
         objs = objs.set(ptr, NumberPrimitive.of(Unsafe.asAddress(clazz)));
-        holding++;
         return ptr;
+    }
+
+    public static void delete(int ptr) {
+        free.set(--freeHead, NumberPrimitive.of(ptr));
+        if (getObjectFieldsVariable(ptr).exists()) {
+            for (NumberPrimitive field : Unsafe.<ListPrimitive<NumberPrimitive>>cast(getObjectFieldsVariable(ptr))) {
+                int r = getRefs(Unsafe.asInt(field)) - 1;
+                setRefs(Unsafe.asInt(field), r);
+                if (r == 0) {
+                    mark.add(field);
+                }
+            }
+        }
+        Variable.purge(ListPrimitive.of(
+                getObjectFieldsVariable(ptr).getName(),
+                getPrimitiveFieldsVariable(ptr).getName()
+        ));
     }
 
     @EventHandler(id = "world_start")
@@ -136,25 +139,11 @@ public final class Memory {
     }
 
     public static void gc() {
-        ListPrimitive<NumberPrimitive> newMark = ListPrimitive.empty();
-        for (NumberPrimitive ptr : mark) {
-            free.set(--freeHead, ptr);
-            holding--;
-            if (getObjectFieldsVariable(ptr).exists()) {
-                for (NumberPrimitive field : Unsafe.<ListPrimitive<NumberPrimitive>>cast(getObjectFieldsVariable(ptr))) {
-                    int r = getRefs(Unsafe.asInt(ptr)) - 1;
-                    setRefs(Unsafe.asInt(ptr), r);
-                    if (r <= 0) {
-                        newMark.add(ptr);
-                    }
-                    removeRef(Unsafe.asInt(field));
-                }
-            }
-            Variable.purge(ListPrimitive.of(
-                    getObjectFieldsVariable(ptr).getName(),
-                    getPrimitiveFieldsVariable(ptr).getName()
-            ));
+        if (mark.isEmpty()) return;
+        ListPrimitive<NumberPrimitive> iterable = mark;
+        mark = ListPrimitive.empty();
+        for (NumberPrimitive ptr : iterable) {
+            delete(Unsafe.asInt(ptr));
         }
-        mark = newMark;
     }
 }

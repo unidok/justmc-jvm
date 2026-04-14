@@ -50,7 +50,7 @@ public final class Selection {
     public static native AbstractEntity getVictim();
 
     /**
-     * @return Случайная загруженная сущность
+     * @return Случайная сущность
      */
     public static native Entity getRandomEntity();
 

@@ -106,4 +106,7 @@ public final class ListPrimitive<E extends Primitive> extends Primitive implemen
                 Pair.of("list", this)
         ));
     }
+
+    @NotNull
+    public native Object[] toArray();
 }

@@ -1,6 +1,5 @@
 plugins {
     java
-    kotlin("jvm")
 }
 
 group = "me.unidok"
@@ -8,6 +7,10 @@ version = "2.0"
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    implementation("org.jetbrains:annotations:24.0.0")
 }
 
 java {

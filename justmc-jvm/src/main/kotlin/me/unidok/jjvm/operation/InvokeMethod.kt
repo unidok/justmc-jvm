@@ -40,18 +40,18 @@ class InvokeMethod(
         val args = args
         val self = self?.translate(context, null)
         val functionName: Value
+        val clazz = jar.findClass(owner)!!
         if (virtual) {
             functionName = context.tempVar()
             context.addOperation(JustOperation(
-                "set_variable_get_map_value", mapOf(
+                "set_variable_get_list_value", mapOf(
                     "variable" to functionName,
-                    "map" to ValueProvider.vtable(jar.getClassAddress(Type.getObjectType(owner))),
-                    "key" to TextValue("$name$desc")
+                    "list" to ValueProvider.vtable(jar.getClassAddress(Type.getObjectType(owner))),
+                    "number" to Values.valueOf(clazz.methods.keys.indexOf(fullName))
                 )
             ))
         } else {
-            val method = jar.findMethod(owner, name, desc) ?: throw NullPointerException("Method '$fullName' not found in jar")
-            functionName = TextValue(method.functionName)
+            functionName = TextValue(clazz.methods[fullName]!!.functionName)
         }
         context.addOperation(
             JustOperation(
@@ -59,7 +59,7 @@ class InvokeMethod(
                     "function_name" to functionName,
                     "args" to MapValue(buildMap {
                         if (Type.getReturnType(desc).sort != Type.VOID) {
-                            put(Values.valueOf(context.provider.returnVariable.name), variable ?: EmptyValue)
+                            put(Values.valueOf(ValueProvider.defaultReturnVariable.name), variable ?: EmptyValue)
                         }
                         var index = 0
                         if (self != null) {

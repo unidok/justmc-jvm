@@ -45,6 +45,9 @@ public final class Variable extends Primitive {
      */
     public static native Variable result();
 
+    // TODO
+    public static native Variable of(Object value);
+
     public static void purge(Primitive names) {
         Unsafe.operation("set_variable_purge", MapPrimitive.of(
                 Pair.of("names", names)

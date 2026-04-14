@@ -6,5 +6,11 @@ import justmc.annotation.Inline;
 public final class Block extends Primitive {
     private Block() {}
 
-    public static native Block of(String id);
+    /**
+     * Получает блок по данным.
+     * @param blockData Данные блока
+     * @return Блок
+     * @see <a href=https://github.com/donzgold/JustMC_compilator/blob/master/data/blocks.json>Список блоков</a>
+     */
+    public static native Block of(String blockData);
 }
