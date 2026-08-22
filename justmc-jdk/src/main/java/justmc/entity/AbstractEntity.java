@@ -13,7 +13,7 @@ public interface AbstractEntity {
      * Получает игровое значение с селектором.
      * @param id Идентификатор значения
      * @return Игровое значение с селектором
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/values.json">Список значений</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/arguments/game_value">Список значений</a>
      */
     Primitive getValue(String id);
 
@@ -21,7 +21,7 @@ public interface AbstractEntity {
      * Вызов действия Creative+ с селектором.
      * @param id Идентификатор действия
      * @param args Аргументы действия
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     void operation(String id, MapPrimitive<Text, Primitive> args);
 
@@ -29,7 +29,7 @@ public interface AbstractEntity {
      * @param id Идентификатор условия
      * @param args Аргументы условия
      * @return Условие с селектором
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     Conditional conditional(String id, MapPrimitive<Text, Primitive> args);
 

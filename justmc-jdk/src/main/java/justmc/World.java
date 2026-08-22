@@ -13,7 +13,7 @@ public final class World {
      * Получает игровое значение.
      * @param id Идентификатор значения
      * @return Игровое значение
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/values.json">Список значений</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/arguments/game_value">Список значений</a>
      */
     public static native Primitive getValue(String id);
 

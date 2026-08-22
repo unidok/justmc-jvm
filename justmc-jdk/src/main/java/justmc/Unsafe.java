@@ -19,7 +19,7 @@ public final class Unsafe {
      * Вызов действия Creative+.
      * @param id Идентификатор действия
      * @param args Аргументы действия
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     public static native void operation(String id, MapPrimitive<Text, Primitive> args);
 
@@ -29,7 +29,7 @@ public final class Unsafe {
      * @param id Идентификатор действия
      * @param args Аргументы действия
      * @param block Блок кода
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     public static native void operation(String id, MapPrimitive<Text, Primitive> args, Runnable block);
 
@@ -38,7 +38,7 @@ public final class Unsafe {
      * Например, можно использовать для выборки по условию.
      * @param id Идентификатор действия
      * @param conditional Условие действия
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     public static native void operation(String id, Conditional conditional);
 
@@ -48,7 +48,7 @@ public final class Unsafe {
      * @param id Идентификатор действия
      * @param conditional Аргументы действия
      * @param block Блок кода
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     public static native void operation(String id, Conditional conditional, Runnable block);
 
@@ -66,7 +66,7 @@ public final class Unsafe {
      * @param id Идентификатор цикла
      * @param args Аргументы цикла
      * @return Примитивный итератор
-     * @see <a href="https://github.com/donzgold/JustMC_compilator/blob/master/data/actions.json">Список действий</a>
+     * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     @FakeObject
     public static native <E extends Primitive> Iterator<E> iterator(String id, MapPrimitive<Text, Primitive> args);

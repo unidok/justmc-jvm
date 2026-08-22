@@ -10,7 +10,6 @@ public final class Item extends Primitive {
      * Получает предмет по идентификатору.
      * @param id Идентификатор
      * @return Предмет
-     * @see <a href=https://github.com/donzgold/JustMC_compilator/blob/master/data/items.json>Список предметов</a>
      */
     public static native Item of(String id);
 

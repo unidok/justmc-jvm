@@ -14,25 +14,25 @@ public final class Memory {
     private static final int HEAP_SIZE = ListPrimitive.MAX_SIZE - 1;
     /**
      * Данные кучи, хранящие класс каждого объекта.
-     * [null, ссылка на класс, ссылка на класс, ссылка на класс, ...]
-     *  ^^^^
+     * {@code [null, ссылка на класс, ссылка на класс, ссылка на класс, ...]}
      * Если мы попытаемся обратиться по нулевому указателю, то нам даст null.
-     * То есть мы выделили дополнительную ячейку под null, чтобы избежать лишних проверок.
+     * Мы выделили дополнительную ячейку под null, чтобы избежать лишних проверок.
+     * Поэтому размер кучи не 20000, а на 1 меньше.
      */
-    private static ListPrimitive<NumberPrimitive> objs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
+    private static final ListPrimitive<NumberPrimitive> objs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
     /**
      * Данные кучи, хранящие количество ссылок на каждой объект.
-     * [null, количество ссылок, количество ссылок, количество ссылок, ...]
+     * {@code [null, количество ссылок, количество ссылок, количество ссылок, ...]}
      */
-    private static ListPrimitive<NumberPrimitive> refs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
+    private static final ListPrimitive<NumberPrimitive> refs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
     /**
      * Очередь свободных указателей.
      * Изначально хранит все указатели.
      */
-    private static ListPrimitive<NumberPrimitive> free = ListPrimitive.empty();
+    private static final ListPrimitive<NumberPrimitive> free = ListPrimitive.empty();
     /**
-     * Индекс начала очереди.
-     * По совместительству количество занятой памяти.
+     * Индекс конца очереди свободных указателей.
+     * Как следствие, количество занятой памяти.
      */
     private static int freeHead = 0;
     /**
@@ -43,7 +43,7 @@ public final class Memory {
     static {
         // Изначально все указатели свободны:
         for (int i = 1; i <= HEAP_SIZE; i++) {
-            free = free.add(NumberPrimitive.of(i));
+            free.add(NumberPrimitive.of(i));
         }
     }
 
@@ -71,7 +71,7 @@ public final class Memory {
 
     @Inline
     public static void setRefs(int ptr, int r) {
-        refs = refs.set(ptr, NumberPrimitive.of(r));
+        refs.set(ptr, NumberPrimitive.of(r));
     }
 
     /**
@@ -87,7 +87,7 @@ public final class Memory {
 
     /**
      * Удалить ссылку на объект.
-     * Автоматически вставляется после каждого дублирования ссылки.
+     * Автоматически вставляется после каждой потери ссылки.
      * Если ссылок не осталось, то удаляет объект.
      * @param ptr Указатель на объект
      * @see #addRef(int ptr)
@@ -109,7 +109,7 @@ public final class Memory {
             }
         }
         int ptr = Unsafe.asInt(free.get(freeHead++));
-        objs = objs.set(ptr, NumberPrimitive.of(Unsafe.asAddress(clazz)));
+        objs.set(ptr, NumberPrimitive.of(Unsafe.asAddress(clazz)));
         return ptr;
     }
 
