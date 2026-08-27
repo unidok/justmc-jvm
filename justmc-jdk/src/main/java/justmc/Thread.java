@@ -1,6 +1,7 @@
 package justmc;
 
 import justmc.annotation.Inline;
+import justmc.annotation.UnsafeMark;
 import justmc.enums.TimeUnit;
 
 /**
@@ -33,18 +34,22 @@ public final class Thread {
         }
     }
 
+    @UnsafeMark
     public static void kill() {
         Unsafe.operation("control_end_thread", MapPrimitive.empty());
     }
 
+    @UnsafeMark
     public static void stopRepeat() {
         Unsafe.operation("control_stop_repeat", MapPrimitive.empty());
     }
 
+    @UnsafeMark
     public static void skipIteration() {
         Unsafe.operation("control_skip_iteration", MapPrimitive.empty());
     }
 
+    @UnsafeMark
     public static void returnFunction() {
         Unsafe.operation("control_return_function", MapPrimitive.empty());
     }
@@ -56,6 +61,7 @@ public final class Thread {
         ));
     }
 
+    @UnsafeMark
     public static void error(Text message) {
         Unsafe.operation("control_call_exception", MapPrimitive.of(
                 Pair.of("message", message),

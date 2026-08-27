@@ -1,6 +1,7 @@
 package justmc;
 
 import justmc.annotation.Inline;
+import justmc.annotation.UnsafeMark;
 
 @Inline
 public final class Variable extends Primitive {
@@ -45,9 +46,7 @@ public final class Variable extends Primitive {
      */
     public static native Variable result();
 
-    // TODO
-    public static native Variable of(Object value);
-
+    @UnsafeMark
     public static void purge(Primitive names) {
         Unsafe.operation("set_variable_purge", MapPrimitive.of(
                 Pair.of("names", names)
@@ -56,6 +55,7 @@ public final class Variable extends Primitive {
 
     public native Text getName();
 
+    @UnsafeMark
     public void setValue(Primitive value) {
         Unsafe.operation("set_variable_value", MapPrimitive.of(
                 Pair.of("variable", this),
@@ -63,12 +63,14 @@ public final class Variable extends Primitive {
         ));
     }
 
+    @UnsafeMark
     public void increment() {
         Unsafe.operation("set_variable_increment", MapPrimitive.of(
                 Pair.of("variable", this)
         ));
     }
 
+    @UnsafeMark
     public void decrement() {
         Unsafe.operation("set_variable_decrement", MapPrimitive.of(
                 Pair.of("variable", this)

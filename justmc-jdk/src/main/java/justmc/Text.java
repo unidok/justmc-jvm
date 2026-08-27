@@ -32,6 +32,9 @@ public final class Text extends Primitive {
     @NotNull
     public static native Text json(Primitive o);
 
+    @NotNull
+    public static native Text withArgs(String pattern, Primitive... args);
+
     public int getLength() {
         var result = Variable.result();
         Unsafe.operation("set_variable_text_length", MapPrimitive.of(

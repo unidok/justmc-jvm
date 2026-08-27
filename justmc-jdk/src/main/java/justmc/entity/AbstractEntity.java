@@ -2,6 +2,7 @@ package justmc.entity;
 
 import justmc.*;
 import justmc.annotation.FakeObject;
+import justmc.annotation.UnsafeMark;
 import justmc.enums.NbtValueType;
 
 /**
@@ -23,6 +24,7 @@ public interface AbstractEntity {
      * @param args Аргументы действия
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
+    @UnsafeMark
     void operation(String id, MapPrimitive<Text, Primitive> args);
 
     /**

@@ -2,6 +2,7 @@ package justmc;
 
 import justmc.annotation.EventHandler;
 import justmc.annotation.Inline;
+import justmc.annotation.UnsafeMark;
 
 /**
  * Стандартная реализация памяти (кучи), балансирующая между
@@ -10,6 +11,7 @@ import justmc.annotation.Inline;
  * сколько полей имеет объект. То есть каждый из этих объектов
  * может хранить по 20000 объектных полей и ещё столько же примитивных.
  */
+@UnsafeMark
 public final class Memory {
     private static final int HEAP_SIZE = ListPrimitive.MAX_SIZE - 1;
     /**
@@ -100,16 +102,17 @@ public final class Memory {
         }
     }
 
-    public static int newInstance(Class<?> clazz) {
+    public static int newInstance(int classPtr) {
         if (freeHead >= HEAP_SIZE) {
             gc(); // Пробуем очистить
             if (freeHead >= HEAP_SIZE) {
                 // Если не смогло очистить, кидаем ошибку
+                Text.withArgs("Out of memory: {}/{}", NumberPrimitive.of(freeHead));
                 Thread.fatalError(Text.plain("Out of memory"));
             }
         }
         int ptr = Unsafe.asInt(free.get(freeHead++));
-        objs.set(ptr, NumberPrimitive.of(Unsafe.asAddress(clazz)));
+        objs.set(ptr, NumberPrimitive.of(classPtr));
         return ptr;
     }
 

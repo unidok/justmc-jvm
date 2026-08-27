@@ -2,16 +2,15 @@ package justmc;
 
 import justmc.annotation.FakeObject;
 import justmc.annotation.Inline;
+import justmc.annotation.UnsafeMark;
 
 import java.util.Iterator;
 
 /**
  * Класс с утилитами для кода и взаимодействия с действиями Creative+.
- * Внимание! Использование методов отсюда может привести к
- * неопределённому поведению или ошибкам в вашем коде.
- * Используйте, только если знаете, что делаете.
  */
 @Inline
+@UnsafeMark
 public final class Unsafe {
     private Unsafe() {}
 
