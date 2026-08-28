@@ -1,35 +1,23 @@
 package justmc;
 
-import justmc.annotation.Inline;
 import justmc.enums.BlockFace;
 import org.jetbrains.annotations.Nullable;
 
-@Inline
 public final class RayTraceResult extends Primitive {
-    private RayTraceResult() {}
+    public final @Nullable Location location;
+    public final @Nullable Location blockLocation;
+    public final @Nullable BlockFace blockFace;
+    public final @Nullable EntityId entity;
 
-    public static RayTraceResult of(
+    public RayTraceResult(
             @Nullable Location location,
             @Nullable Location blockLocation,
-            @Nullable BlockFace face,
-            @Nullable Text entity
+            @Nullable BlockFace blockFace,
+            @Nullable EntityId entity
     ) {
-        return Unsafe.cast(ListPrimitive.of(location, blockLocation, face, entity));
-    }
-
-    public @Nullable Location getLocation() {
-        return Unsafe.cast(Unsafe.<ListPrimitive<?>>cast(this).get(0));
-    }
-
-    public @Nullable Location getBlockLocation() {
-        return Unsafe.cast(Unsafe.<ListPrimitive<?>>cast(this).get(1));
-    }
-
-    public @Nullable BlockFace getFace() {
-        return Unsafe.cast(Unsafe.<ListPrimitive<?>>cast(this).get(2));
-    }
-
-    public @Nullable Text getEntity() {
-        return Unsafe.cast(Unsafe.<ListPrimitive<?>>cast(this).get(3));
+        this.location = location;
+        this.blockLocation = blockLocation;
+        this.blockFace = blockFace;
+        this.entity = entity;
     }
 }

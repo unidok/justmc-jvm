@@ -108,5 +108,23 @@ public final class ListPrimitive<E extends Primitive> extends Primitive implemen
     }
 
     @NotNull
-    public native Object[] toArray();
+    public Iterator<IndexedValue<E>> indexedIterator() {
+        return Unsafe.iterator("repeat_for_each_in_list", MapPrimitive.of(
+                Pair.of("index_variable", Variable.temp()),
+                Pair.of("value_variable", Variable.temp()),
+                Pair.of("list", this)
+        ));
+    }
+
+    @NotNull
+    public Primitive[] toArray() {
+        int ptr = Memory.newInstance(Unsafe.asAddress(Primitive[].class));
+        Memory.getPrimitiveFieldsVariable(ptr).setValue(this);
+        return Unsafe.cast(Unsafe.asObject(ptr));
+    }
+
+    @NotNull
+    public ListPrimitive<Text> asTexts() {
+        return Unsafe.cast(this);
+    }
 }

@@ -2,6 +2,7 @@ package justmc;
 
 import justmc.annotation.FakeObject;
 import justmc.annotation.Inline;
+import justmc.annotation.MustBeConst;
 import justmc.annotation.UnsafeMark;
 
 import java.util.Iterator;
@@ -20,7 +21,10 @@ public final class Unsafe {
      * @param args Аргументы действия
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
-    public static native void operation(String id, MapPrimitive<Text, Primitive> args);
+    public static native void operation(
+            @MustBeConst String id,
+            @MustBeConst MapPrimitive<Text, Primitive> args
+    );
 
     /**
      * Вызов действия Creative+ с указанием блока кода.
@@ -30,7 +34,11 @@ public final class Unsafe {
      * @param block Блок кода
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
-    public static native void operation(String id, MapPrimitive<Text, Primitive> args, Runnable block);
+    public static native void operation(
+            @MustBeConst String id,
+            @MustBeConst MapPrimitive<Text, Primitive> args,
+            Runnable block
+    );
 
     /**
      * Вызов действия Creative+ с указанием условия.
@@ -39,7 +47,10 @@ public final class Unsafe {
      * @param conditional Условие действия
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
-    public static native void operation(String id, Conditional conditional);
+    public static native void operation(
+            @MustBeConst String id,
+            Conditional conditional
+    );
 
     /**
      * Вызов действия Creative+ с указанием условия и блока кода.
@@ -49,7 +60,11 @@ public final class Unsafe {
      * @param block Блок кода
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
-    public static native void operation(String id, Conditional conditional, Runnable block);
+    public static native void operation(
+            @MustBeConst String id,
+            @MustBeConst Conditional conditional,
+            Runnable block
+    );
 
     /**
      * Создаёт примитивный итератор, который будет заменён на цикл.
@@ -68,7 +83,10 @@ public final class Unsafe {
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     @FakeObject
-    public static native <E extends Primitive> Iterator<E> iterator(String id, MapPrimitive<Text, Primitive> args);
+    public static native <E extends Primitive> Iterator<E> iterator(
+            @MustBeConst String id,
+            @MustBeConst MapPrimitive<Text, Primitive> args
+    );
 
     /**
      * Принимает значение как boolean
@@ -141,9 +159,9 @@ public final class Unsafe {
     public static native double asDouble(Primitive o);
 
     /**
-     * Принимает значение как {@code T}
+     * Принимает значение как {@link T}
      * @param o Значение
-     * @return То же самое значение, но с типом {@code T}
+     * @return То же самое значение, но с типом {@link T}
      * @param <T> Новый тип
      */
     public static native <T> T cast(Object o);

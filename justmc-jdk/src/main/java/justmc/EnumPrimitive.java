@@ -1,5 +1,7 @@
 package justmc;
 
+import justmc.annotation.MustBeConst;
+
 /**
  * Класс для маркеров (перечислений).
  */
@@ -13,7 +15,9 @@ public abstract class EnumPrimitive extends Primitive {
      * @param name Идентификатор маркера
      * @return Маркер true/false
      */
-    public static native EnumPrimitive of(String name);
+    public static native EnumPrimitive of(@MustBeConst String name);
+
+    public static native EnumPrimitive of(Variable linkedVariable, @MustBeConst String defaultValue);
 
     /**
      * Получает маркер true/false.

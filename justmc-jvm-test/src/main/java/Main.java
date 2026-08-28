@@ -8,12 +8,12 @@ import justmc.event.player.PlayerSwapHandItemsEvent;
 
 public final class Main {
     static void println(String message) {
-        Selection.getAllPlayers().sendMessage(message);
+        Selection.getAllPlayers().sendMessage(Text.plain(message));
     }
 
     @EventHandler
     static void onPlayerJoin(PlayerJoinEvent event) {
-        event.getPlayer().sendMessage("Hello");
+        event.getPlayer().sendMessage(Text.plain("Hello"));
     }
 
 //    @EventHandler

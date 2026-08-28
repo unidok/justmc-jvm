@@ -20,6 +20,15 @@ public final class Item extends Primitive {
      */
     public static native Item deserialize(String data);
 
+    public Text getType() {
+        var result = Variable.result();
+        Unsafe.operation("set_variable_get_item_type", MapPrimitive.of(
+                Pair.of("variable", result),
+                Pair.of("type", this)
+        ));
+        return Unsafe.cast(result);
+    }
+
     public int getAmount() {
         var result = Variable.result();
         Unsafe.operation("set_variable_get_item_amount", MapPrimitive.of(

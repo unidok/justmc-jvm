@@ -4,6 +4,7 @@ import justmc.annotation.Inline;
 import justmc.annotation.UnsafeMark;
 
 @Inline
+@UnsafeMark
 public final class Variable extends Primitive {
     private Variable() {}
 
@@ -16,25 +17,25 @@ public final class Variable extends Primitive {
      * @param name Имя переменной
      * @return Сохранённая переменная с данным именем
      */
-    public static native Variable save(Primitive name);
+    public static native Variable save(Text name);
 
     /**
      * @param name Имя переменной
      * @return Игровая переменная с данным именем
      */
-    public static native Variable game(Primitive name);
+    public static native Variable game(Text name);
 
     /**
      * @param name Имя переменной
      * @return Локальная переменная с данным именем
      */
-    public static native Variable local(Primitive name);
+    public static native Variable local(Text name);
 
     /**
      * @param name Имя переменной
      * @return Строчная переменная с данным именем
      */
-    public static native Variable line(Primitive name);
+    public static native Variable line(Text name);
 
     /**
      * @return Строчная переменная со сгенерированным именем
@@ -46,7 +47,6 @@ public final class Variable extends Primitive {
      */
     public static native Variable result();
 
-    @UnsafeMark
     public static void purge(Primitive names) {
         Unsafe.operation("set_variable_purge", MapPrimitive.of(
                 Pair.of("names", names)
@@ -55,7 +55,6 @@ public final class Variable extends Primitive {
 
     public native Text getName();
 
-    @UnsafeMark
     public void setValue(Primitive value) {
         Unsafe.operation("set_variable_value", MapPrimitive.of(
                 Pair.of("variable", this),
@@ -63,18 +62,18 @@ public final class Variable extends Primitive {
         ));
     }
 
-    @UnsafeMark
-    public void increment() {
+    public NumberPrimitive increment() {
         Unsafe.operation("set_variable_increment", MapPrimitive.of(
                 Pair.of("variable", this)
         ));
+        return Unsafe.cast(this);
     }
 
-    @UnsafeMark
-    public void decrement() {
+    public NumberPrimitive decrement() {
         Unsafe.operation("set_variable_decrement", MapPrimitive.of(
                 Pair.of("variable", this)
         ));
+        return Unsafe.cast(this);
     }
 
     public boolean exists() {

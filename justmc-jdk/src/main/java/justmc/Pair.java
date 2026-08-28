@@ -5,23 +5,16 @@ import org.jetbrains.annotations.NotNull;
 
 @Inline
 public final class Pair<A extends Primitive, B extends Primitive> extends Primitive {
-    private Pair() {}
+    public final A first;
+    public final B second;
 
-    @NotNull
-    public static <A extends Primitive, B extends Primitive> Pair<A, B> of(A a, B b) {
-        return Unsafe.cast(ListPrimitive.of(a, b));
+    public Pair(A first, B second) {
+        this.first = first;
+        this.second = second;
     }
 
     @NotNull
-    public static Pair<Text, Primitive> of(String a, Primitive b) {
-        return of(Text.plain(a), b);
-    }
-
-    public A getFirst() {
-        return Unsafe.cast(Unsafe.<ListPrimitive<?>>cast(this).get(0));
-    }
-
-    public B getSecond() {
-        return Unsafe.cast(Unsafe.<ListPrimitive<?>>cast(this).get(1));
+    public static Pair<Text, Primitive> of(String first, Primitive second) {
+        return new Pair<>(Text.plain(first), second);
     }
 }

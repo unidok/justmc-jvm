@@ -24,7 +24,7 @@ public final class MapPrimitive<K extends Primitive, V extends Primitive> extend
     public static <K extends Primitive, V extends Primitive> MapPrimitive<K, V> of(Pair<K, V>... args) {
         MapPrimitive<K, V> result = empty();
         for (Pair<K, V> pair : args) {
-            result.put(pair.getFirst(), pair.getSecond());
+            result.put(pair.first, pair.second);
         }
         return result;
     }

@@ -1,11 +1,21 @@
 package justmc;
 
 import justmc.annotation.Inline;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 @Inline
 public final class Util {
+    @Nullable
+    public static PrimitiveError runCatching(Runnable block) {
+        var result = Variable.temp();
+        Unsafe.operation("controller_exception", MapPrimitive.of(
+                Pair.of("variable", result)
+        ), block);
+        return Unsafe.cast(result);
+    }
+
     public static long measureNanoTime(Runnable block) {
         var result = Variable.result();
         Unsafe.operation("controller_measure_time", MapPrimitive.of(

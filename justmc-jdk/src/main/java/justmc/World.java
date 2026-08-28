@@ -4,6 +4,7 @@ import justmc.annotation.Inline;
 import justmc.enums.BlockValueType;
 import justmc.enums.FluidCollisionMode;
 import justmc.enums.RayCollisionMode;
+import org.jetbrains.annotations.Range;
 
 @Inline
 public final class World {
@@ -79,7 +80,7 @@ public final class World {
                 Pair.of("variable_for_hit_entity_uuid", hitEntityUUID),
                 Pair.of("entities", entities)
         ));
-        return RayTraceResult.of(
+        return new RayTraceResult(
                 Unsafe.cast(hitLocation),
                 Unsafe.cast(hitBlockLocation),
                 Unsafe.cast(hitBlockFace),

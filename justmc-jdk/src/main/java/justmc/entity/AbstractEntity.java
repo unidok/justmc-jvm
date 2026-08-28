@@ -2,6 +2,7 @@ package justmc.entity;
 
 import justmc.*;
 import justmc.annotation.FakeObject;
+import justmc.annotation.MustBeConst;
 import justmc.annotation.UnsafeMark;
 import justmc.enums.NbtValueType;
 
@@ -25,7 +26,7 @@ public interface AbstractEntity {
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
     @UnsafeMark
-    void operation(String id, MapPrimitive<Text, Primitive> args);
+    void operation(@MustBeConst String id, @MustBeConst MapPrimitive<Text, Primitive> args);
 
     /**
      * @param id Идентификатор условия
@@ -33,7 +34,7 @@ public interface AbstractEntity {
      * @return Условие с селектором
      * @see <a href="https://justwiki.gitbook.io/wiki/creative/editor/blocks">Список действий</a>
      */
-    Conditional conditional(String id, MapPrimitive<Text, Primitive> args);
+    Conditional conditional(@MustBeConst String id, @MustBeConst MapPrimitive<Text, Primitive> args);
 
     default Text getName() {
         return Unsafe.cast(getValue("name"));

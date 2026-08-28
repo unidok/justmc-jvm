@@ -69,6 +69,11 @@ public final class Thread {
         ));
     }
 
+    @UnsafeMark
+    public static void error(PrimitiveError error) {
+        error(error.id);
+    }
+
     public static void fatalError(Text message) {
         Unsafe.operation("control_call_exception", MapPrimitive.of(
                 Pair.of("message", message),

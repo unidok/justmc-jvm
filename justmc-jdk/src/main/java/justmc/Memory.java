@@ -53,12 +53,12 @@ public final class Memory {
 
     @Inline
     public static Variable getObjectFieldsVariable(int ptr) {
-        return Variable.game(Text.plain("o").plus(NumberPrimitive.of(ptr)));
+        return Variable.game(Text.plain("o").plus(NumberPrimitive.of(ptr).asText()));
     }
 
     @Inline
     public static Variable getPrimitiveFieldsVariable(int ptr) {
-        return Variable.game(Text.plain("p").plus(NumberPrimitive.of(ptr)));
+        return Variable.game(Text.plain("p").plus(NumberPrimitive.of(ptr).asText()));
     }
 
     @Inline
@@ -107,7 +107,6 @@ public final class Memory {
             gc(); // Пробуем очистить
             if (freeHead >= HEAP_SIZE) {
                 // Если не смогло очистить, кидаем ошибку
-                Text.withArgs("Out of memory: {}/{}", NumberPrimitive.of(freeHead));
                 Thread.fatalError(Text.plain("Out of memory"));
             }
         }
@@ -136,7 +135,7 @@ public final class Memory {
     @EventHandler(id = "world_start")
     private static void cleaner() {
         while (true) {
-            Thread.wait(93);
+            Thread.wait(100);
             gc();
         }
     }

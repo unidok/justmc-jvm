@@ -1,6 +1,7 @@
 package justmc;
 
 import justmc.annotation.Inline;
+import justmc.annotation.MustBeConst;
 import justmc.enums.TextParsing;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,28 +13,16 @@ public final class Text extends Primitive {
     public static native Text plain(String text);
 
     @NotNull
-    public static native Text plain(Primitive o);
-
-    @NotNull
     public static native Text legacy(String text);
-
-    @NotNull
-    public static native Text legacy(Primitive o);
 
     @NotNull
     public static native Text mini(String text);
 
     @NotNull
-    public static native Text mini(Primitive o);
-
-    @NotNull
     public static native Text json(String text);
 
-    @NotNull
-    public static native Text json(Primitive o);
-
-    @NotNull
-    public static native Text withArgs(String pattern, Primitive... args);
+//    @NotNull
+//    public static native Text withArgs(@MustBeConst String pattern, Primitive... args);
 
     public int getLength() {
         var result = Variable.result();
@@ -56,5 +45,8 @@ public final class Text extends Primitive {
     }
 
     @NotNull
-    public native Text plus(Primitive other);
+    public native Text plus(Text other);
+
+    @NotNull
+    public native Text append(Text other);
 }

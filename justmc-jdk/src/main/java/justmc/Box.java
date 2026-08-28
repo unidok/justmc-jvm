@@ -1,14 +1,10 @@
-package justmc.util;
+package justmc;
 
-import justmc.Memory;
-import justmc.Primitive;
-import justmc.Unsafe;
-import justmc.Variable;
 import justmc.annotation.Inline;
 
 @Inline
-public final class Reference<T extends Primitive> {
-    public Reference(T value) {
+public final class Box<T extends Primitive> {
+    public Box(T value) {
         setValue(value);
     }
 

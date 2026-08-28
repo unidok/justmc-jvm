@@ -1,9 +1,13 @@
 package justmc;
 
-public abstract class PrimitiveError extends Throwable {
-    protected PrimitiveError() {}
+public final class PrimitiveError extends Primitive {
+    public final Text id;
 
-    public abstract Text getId();
+    public PrimitiveError(Text id) {
+        this.id = id;
+    }
 
-    public abstract Text getDisplay();
+    public PrimitiveError(String id) {
+        this.id = Text.plain(id);
+    }
 }
