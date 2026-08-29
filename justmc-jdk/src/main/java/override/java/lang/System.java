@@ -2,7 +2,7 @@ package override.java.lang;
 
 import justmc.*;
 import justmc.annotation.Inline;
-import justmc.Memory;
+import justmc.Heap;
 
 @Inline
 public final class System {
@@ -21,6 +21,6 @@ public final class System {
     }
 
     public static void gc() {
-        Memory.gc();
+        Heap.gc();
     }
 }

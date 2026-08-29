@@ -2,18 +2,20 @@ package justmc;
 
 import justmc.annotation.EventHandler;
 import justmc.annotation.Inline;
+import justmc.annotation.JmcName;
 import justmc.annotation.UnsafeMark;
 
 /**
- * Стандартная реализация памяти (кучи), балансирующая между
+ * Стандартная реализация кучи, балансирующая между
  * производительностью и максимальным размером.
  * Максимальный размер - 19999 объектов, причём не важно,
  * сколько полей имеет объект. То есть каждый из этих объектов
  * может хранить по 20000 объектных полей и ещё столько же примитивных.
  */
+@Inline
 @UnsafeMark
-public final class Memory {
-    private static final int HEAP_SIZE = ListPrimitive.MAX_SIZE - 1;
+public final class Heap {
+    private static final int SIZE = ListPrimitive.MAX_SIZE - 1;
     /**
      * Данные кучи, хранящие класс каждого объекта.
      * {@code [null, ссылка на класс, ссылка на класс, ссылка на класс, ...]}
@@ -21,12 +23,12 @@ public final class Memory {
      * Мы выделили дополнительную ячейку под null, чтобы избежать лишних проверок.
      * Поэтому размер кучи не 20000, а на 1 меньше.
      */
-    private static final ListPrimitive<NumberPrimitive> objs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
+    private static final ListPrimitive<NumberPrimitive> objs = ListPrimitive.ofNulls(SIZE + 1);
     /**
      * Данные кучи, хранящие количество ссылок на каждой объект.
      * {@code [null, количество ссылок, количество ссылок, количество ссылок, ...]}
      */
-    private static final ListPrimitive<NumberPrimitive> refs = ListPrimitive.ofNulls(HEAP_SIZE + 1);
+    private static final ListPrimitive<NumberPrimitive> refs = ListPrimitive.ofNulls(SIZE + 1);
     /**
      * Очередь свободных указателей.
      * Изначально хранит все указатели.
@@ -44,34 +46,29 @@ public final class Memory {
 
     static {
         // Изначально все указатели свободны:
-        for (int i = 1; i <= HEAP_SIZE; i++) {
+        for (int i = 1; i <= SIZE; i++) {
             free.add(NumberPrimitive.of(i));
         }
     }
 
-    private Memory() {}
+    private Heap() {}
 
-    @Inline
     public static Variable getObjectFieldsVariable(int ptr) {
         return Variable.game(Text.plain("o").plus(NumberPrimitive.of(ptr).asText()));
     }
 
-    @Inline
     public static Variable getPrimitiveFieldsVariable(int ptr) {
         return Variable.game(Text.plain("p").plus(NumberPrimitive.of(ptr).asText()));
     }
 
-    @Inline
     public static int getClass(int ptr) {
         return Unsafe.asInt(objs.get(ptr));
     }
 
-    @Inline
     public static int getRefs(int ptr) {
         return Unsafe.asInt(refs.get(ptr));
     }
 
-    @Inline
     public static void setRefs(int ptr, int r) {
         refs.set(ptr, NumberPrimitive.of(r));
     }
@@ -79,33 +76,37 @@ public final class Memory {
     /**
      * Добавить ссылку на объект.
      * Автоматически вставляется перед каждым дублированием ссылки:
-     * при передаче аргументов, при установке в переменные и т.п.
-     * @param ptr Указатель на объект
+     * при установке в переменные и т.п.
+     * @param ptrs Указатель на объект
      */
-    @Inline
-    public static void addRef(int ptr) {
-        setRefs(ptr, getRefs(ptr) + 1);
+    @JmcName(name = "ADDREF")
+    public static void addRef(int... ptrs) {
+        for (int ptr : ptrs) setRefs(ptr, getRefs(ptr) + 1);
     }
 
     /**
      * Удалить ссылку на объект.
      * Автоматически вставляется после каждой потери ссылки.
      * Если ссылок не осталось, то удаляет объект.
-     * @param ptr Указатель на объект
-     * @see #addRef(int ptr)
+     * @param ptrs Указатель на объект
+     * @see #addRef(int... ptr)
      */
-    public static void removeRef(int ptr) {
-        int refs = getRefs(ptr);
-        if (refs >= 1) {
-            setRefs(ptr, --refs);
-            if (refs == 0) delete(ptr);
+    @JmcName(name = "REMREF")
+    public static void removeRef(int... ptrs) {
+        for (int ptr : ptrs) {
+            int refs = getRefs(ptr);
+            if (refs >= 1) {
+                setRefs(ptr, --refs);
+                if (refs == 0) delete(ptr);
+            }
         }
     }
 
+    @JmcName(name = "NEW")
     public static int newInstance(int classPtr) {
-        if (freeHead >= HEAP_SIZE) {
+        if (freeHead >= SIZE) {
             gc(); // Пробуем очистить
-            if (freeHead >= HEAP_SIZE) {
+            if (freeHead >= SIZE) {
                 // Если не смогло очистить, кидаем ошибку
                 Thread.fatalError(Text.plain("Out of memory"));
             }
@@ -115,6 +116,7 @@ public final class Memory {
         return ptr;
     }
 
+    @JmcName(name = "DELETE")
     public static void delete(int ptr) {
         free.set(--freeHead, NumberPrimitive.of(ptr));
         if (getObjectFieldsVariable(ptr).exists()) {
@@ -140,6 +142,7 @@ public final class Memory {
         }
     }
 
+    @JmcName(name = "GC")
     public static void gc() {
         if (mark.isEmpty()) return;
         ListPrimitive<NumberPrimitive> iterable = mark;

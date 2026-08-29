@@ -71,8 +71,14 @@ public final class Main {
 //    }
 
 //    void a() {
-//        byte a = 2;
-//        a += 3;
+//        byte b = 2;
+//        b += 3;
+//        short s = b;
+//        s += 4;
+//        int i = b;
+//        i += 5;
+//        long l = b;
+//        l += 6;
 //    }
 
 //    static void branches(int a) { // вроде работает

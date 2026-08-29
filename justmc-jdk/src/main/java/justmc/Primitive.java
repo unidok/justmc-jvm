@@ -1,5 +1,7 @@
 package justmc;
 
+import justmc.annotation.Inline;
+
 /**
  * Класс для примитивов Creative+.<br>
  * Любой наследник этого класса:
@@ -9,6 +11,7 @@ package justmc;
  *     <li>Копируется по значению.</li>
  * </ul>
  */
+@Inline
 public abstract class Primitive {
     protected Primitive() {}
 
@@ -18,14 +21,21 @@ public abstract class Primitive {
      * @return То же самое значение, но с типом {@link Text}
      */
     public final Text asText() {
+
         return Unsafe.cast(this); // Любое значение можно преобразовать в текст, так что это безопасно
     }
 
-    @Override
-    public final native int hashCode();
+    public final native Text toText();
 
     @Override
-    public final native boolean equals(Object obj);
+    public final int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 
     @Override
     public final String toString() {

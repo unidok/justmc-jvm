@@ -12,12 +12,10 @@ public final class ListPrimitive<E extends Primitive> extends Primitive implemen
     private ListPrimitive() {}
 
     @NotNull
-    public static <E extends Primitive> ListPrimitive<E> empty() {
-        return ofNulls(0);
-    }
+    public static native <E extends Primitive> ListPrimitive<E> empty();
 
     @NotNull
-    public static native <E extends Primitive> ListPrimitive<E> ofNulls(int size);
+    public static native ListPrimitive<NumberPrimitive> ofNulls(int size);
 
     @NotNull
     @SafeVarargs
@@ -118,8 +116,8 @@ public final class ListPrimitive<E extends Primitive> extends Primitive implemen
 
     @NotNull
     public Primitive[] toArray() {
-        int ptr = Memory.newInstance(Unsafe.asAddress(Primitive[].class));
-        Memory.getPrimitiveFieldsVariable(ptr).setValue(this);
+        int ptr = Heap.newInstance(Unsafe.asAddress(Primitive[].class));
+        Heap.getPrimitiveFieldsVariable(ptr).setValue(this);
         return Unsafe.cast(Unsafe.asObject(ptr));
     }
 

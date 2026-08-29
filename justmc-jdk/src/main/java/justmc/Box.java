@@ -9,7 +9,7 @@ public final class Box<T extends Primitive> {
     }
 
     public Variable getVariable() {
-        return Memory.getPrimitiveFieldsVariable(Unsafe.asAddress(this));
+        return Heap.getPrimitiveFieldsVariable(Unsafe.asAddress(this));
     }
 
     public void setValue(T value) {
