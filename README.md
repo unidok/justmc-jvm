@@ -153,6 +153,26 @@ main() {
 ```
 </details>
 
+<details>
+<summary><b><i>Хранение структур в единичном контейнере</i></b></summary>
+    
+При записи структуры в единичный контейнер (значение списка, ключ или значение словаря, делегированная переменная и т.д.) все элементы структуры упакуются в новый список, который и будет инстансом структуры.
+```java
+void main() {
+    AStruct aStruct = new AStruct(1, Location.of(0, 0, 0));
+    ListPrimitive<AStruct> list = ListPrimitive.of(aStruct); // Создаём список из структур
+}
+
+// Как это выглядит под капотом (псевдокод):
+main() {
+    int intField = 1;
+    Location primitiveField = Location.of(0, 0, 0);
+    ListPrimitive aStruct = ListPrimitive.of(intField, primitiveField); // упаковка структуры
+    ListPrimitive list = ListPrimitive.of(aStruct); // Список из списков (структур)
+}
+```
+</details>
+
 
 ---
 ### Объекты
